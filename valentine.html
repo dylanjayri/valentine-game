@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dylan ❤️ Valentine</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Arial", sans-serif;
+    background: #ffe6f0;
+    color: #a4133c;
+    text-align: center;
+}
+
+.screen {
+    display: none;
+    padding: 20px;
+}
+
+.active {
+    display: block;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+#gameArea {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    overflow: hidden;
+}
+
+.heart {
+    position: absolute;
+    font-size: 32px;
+    cursor: pointer;
+    user-select: none;
+}
+
+button {
+    background: #ff4d6d;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 20px;
+}
+
+input {
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LEVEL 1 -->
+<div id="level1" class="screen active">
+    <h1>Catch all the hearts 💕</h1>
+    <div id="gameArea"></div>
+</div>
+
+<!-- LEVEL 2 -->
+<div id="level2" class="screen">
+    <h1>One more thing… 💌</h1>
+    <p>What’s your name?</p>
+    <input id="nameInput" placeholder="Your name"/>
+    <br><br>
+    <button onclick="showCertificate()">Continue 💖</button>
+</div>
+
+<!-- LEVEL 3 -->
+<div id="level3" class="screen">
+    <h1>💖 Valentine Certificate 💖</h1>
+    <p id="certificateText"></p>
+    <p><i>Happy Valentine’s Day 💐</i></p>
+    <p><b>— Dylan</b></p>
+</div>
+
+<script>
+const gameArea = document.getElementById("gameArea");
+const heartCount = 7;
+let heartsClicked = 0;
+let hearts = [];
+
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "❤";
+    heart.style.left = Math.random() * 90 + "%";
+    heart.style.top = Math.random() * 80 + "%";
+
+    let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1);
+    let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1);
+
+    heart.addEventListener("click", () => {
+        heart.remove();
+        heartsClicked++;
+        if (heartsClicked === heartCount) {
+            nextLevel();
+        }
+    });
+
+    gameArea.appendChild(heart);
+
+    hearts.push({ el: heart, dx, dy });
+}
+
+function moveHearts() {
+    hearts.forEach(h => {
+        let x = h.el.offsetLeft + h.dx;
+        let y = h.el.offsetTop + h.dy;
+
+        if (x < 0 || x > gameArea.clientWidth - 30) h.dx *= -1;
+        if (y < 0 || y > gameArea.clientHeight - 30) h.dy *= -1;
+
+        h.el.style.left = x + "px";
+        h.el.style.top = y + "px";
+    });
+    requestAnimationFrame(moveHearts);
+}
+
+function nextLevel() {
+    document.getElementById("level1").classList.remove("active");
+    document.getElementById("level2").classList.add("active");
+}
+
+function showCertificate() {
+    const name = document.getElementById("nameInput").value || "My Love";
+    document.getElementById("level2").classList.remove("active");
+    document.getElementById("level3").classList.add("active");
+
+    document.getElementById("certificateText").innerHTML =
+        `This certifies that<br><br><b>${name}</b><br><br>is officially<br><br><b>Dylan’s Valentine 💘</b>`;
+}
+
+// INIT
+for (let i = 0; i < heartCount; i++) createHeart();
+moveHearts();
+</script>
+
+</body>
+</html>
